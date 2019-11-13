@@ -1,1 +1,1 @@
-# validate.json
+# jsonlint
