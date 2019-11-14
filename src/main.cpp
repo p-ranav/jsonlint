@@ -1,16 +1,14 @@
-#include <jsonlint/parser.hpp>
 #include <argparse/argparse.hpp>
 #include <fstream>
+#include <jsonlint/parser.hpp>
 using namespace jsonlint;
 
 int main(int argc, char *argv[]) {
   argparse::ArgumentParser program("jsonlint");
-  program.add_argument("file")
-    .help("json file to validate");
+  program.add_argument("file").help("json file to validate");
   try {
     program.parse_args(argc, argv);
-  }
-  catch (const std::runtime_error& err) {
+  } catch (const std::runtime_error &err) {
     std::cout << err.what() << std::endl;
     std::cout << program;
     exit(0);
@@ -25,7 +23,7 @@ int main(int argc, char *argv[]) {
     std::cerr << "error: failed to open " << filename << std::endl;
   }
   Lexer lexer{source, 0, filename, 1, 1};
-  auto tokens = Tokenize(lexer);  
+  auto tokens = Tokenize(lexer);
   Parser parser(tokens, source);
   parser.ParseJson();
   return 0;

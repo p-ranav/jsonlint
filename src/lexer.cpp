@@ -61,7 +61,7 @@ Token ReadString(Lexer &context) {
         peek = ReadCharacter(context);
         if (peek[0] == 0x0A || peek[0] == EOF) {
           // TODO: report unterminated string
-	  throw std::runtime_error("Unterminated string");
+          throw std::runtime_error("Unterminated string");
         }
         token.literal += peek;
         continue;

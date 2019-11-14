@@ -234,7 +234,7 @@ void Parser::RegisterVisitor(TokenType type, std::function<bool(Parser &)> funct
 
 bool Parser::ParseJson() {
   // TODO: check if tokens is empty
-  
+
   // Initialize current and peek token
   NextToken();
   NextToken();
@@ -250,8 +250,8 @@ bool Parser::ParseJson() {
   }
   if (!silent_mode) {
     std::cout << current.filename << ": " << termcolor::green << termcolor::bold << "Valid JSON"
-	      << termcolor::reset << std::endl;    
-  }  
+              << termcolor::reset << std::endl;
+  }
   return true;
 }
 
