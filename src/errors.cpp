@@ -60,7 +60,13 @@ void ReportError(Stage &context, Token start, Token end, const std::string &brie
   std::string message_leading_blanks(cursor - 1, ' ');
   std::string message_carets = " ";
 
-  if (end.cursor_start - start.cursor_end == 1) {
+  std::cout << start.cursor_end << " " << end.cursor_start << std::endl;
+
+  if (start.cursor_start == end.cursor_start && start.cursor_end == end.cursor_end) {
+    // start and end are the same token
+    message_carets = " ^ ";
+  }
+  else if (end.cursor_start - start.cursor_end == 1) {
     message_carets = " " + std::string(start.cursor_end - start.cursor_start, '^') + " ";
   } else if (end.cursor_start - start.cursor_end > 1) {
     message_carets = " " + std::string(end.cursor_start - cursor - 1, '^') + " ";
@@ -71,13 +77,19 @@ void ReportError(Stage &context, Token start, Token end, const std::string &brie
   if (message_carets == " " || message_carets == "  ") {
     message_carets = " ^ ";
   }
-  std::cout << "Splitting\n";
   std::vector<std::string> lines;
-  auto return_val = GetLines(start.filename, lines);
-  if (!return_val) {
-    throw std::runtime_error(what);
-    return;
+  if (start.filename != "") {
+    auto return_val = GetLines(start.filename, lines);
+    if (!return_val) {    
+      throw std::runtime_error(what);
+      return;
+    }
+  } else {
+    // Used for testing
+    // Split context.source on \n
+    lines = string::Split(context.source, "\n");
   }
+
   std::string error_line = lines[line - 1];
 
   std::cout << termcolor::red << termcolor::bold << "error: " << brief_description

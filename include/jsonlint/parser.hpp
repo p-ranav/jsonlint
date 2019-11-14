@@ -19,9 +19,10 @@ struct Parser {
   std::vector<std::tuple<Token, Token, std::string, std::string>> errors;
   bool silent_mode;
   explicit Parser(const std::vector<Token> &tokens, const std::string &source);
-  void NextToken();
   bool IsCurrentToken(TokenType value);
   bool IsPeekToken(TokenType value);
+  void PreviousToken();
+  void NextToken();
   bool ExpectPeek(TokenType value);
   bool ParseJson();
   void RegisterVisitor(TokenType, std::function<bool(Parser &)>);

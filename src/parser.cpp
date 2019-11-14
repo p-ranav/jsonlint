@@ -2,6 +2,7 @@
 #include <jsonlint/parser.hpp>
 #include <jsonlint/string.hpp>
 #include <termcolor/termcolor.hpp>
+#include <set>
 
 namespace jsonlint {
 
@@ -67,6 +68,7 @@ bool ParseArrayLiteral(Parser &context) {
 
 bool ParseObject(Parser &context) {
   // assume current is '{'
+  std::set<std::string> keys;
   if (context.IsPeekToken(TokenType::RIGHT_BRACE)) {
     context.NextToken();
     return true;
@@ -79,6 +81,12 @@ bool ParseObject(Parser &context) {
       ReportParserError(context, context.current, context.peek, "Failed to parse object",
                         "Expected STRING, instead got '" + context.current.literal + "'");
       return false;
+    }
+    if (keys.find(context.current.literal) == keys.end())
+      keys.insert(context.current.literal);
+    else {
+      ReportParserError(context, context.current, context.current, "Failed to parse object",
+                        "Duplicate key '" + context.current.literal + "'");      
     }
     // current is string key
     if (!context.ExpectPeek(TokenType::COLON)) {
@@ -117,6 +125,16 @@ Parser::Parser(const std::vector<Token> &tokens, const std::string &source)
   RegisterVisitor(TokenType::MINUS, details::ParseSignedNumber);
   RegisterVisitor(TokenType::LEFT_BRACKET, details::ParseArrayLiteral);
   RegisterVisitor(TokenType::LEFT_BRACE, details::ParseObject);
+}
+
+void Parser::PreviousToken() {
+  peek = current;
+  current_index -= 1;
+  current = tokens[tokens.size() - 1]; // last token
+  if (current_index - 2 < tokens.size())
+    current = tokens[current_index - 2];
+  else
+    current = tokens[0];
 }
 
 void Parser::NextToken() {
