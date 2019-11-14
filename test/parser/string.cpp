@@ -29,16 +29,3 @@ TEST_CASE("The parser can parse the number '\uABCD'", "[parser]") {
   auto result = parser.ParseJson();
   REQUIRE(result);
 }
-
-// TEST_CASE("The parser can parse the number '<slash>uABCG'", "[parser]") {
-//   std::string filename = "";
-//   std::string source = R"(\"\uABCG\")";
-//   Lexer lexer{"", 0, "", 1, 1};
-//   lexer.filename = filename;
-//   lexer.source = source;
-//   auto tokens = Tokenize(lexer);
-//   Parser parser(tokens, source);
-//   parser.silent_mode = true;
-//   auto result = parser.ParseJson();
-//   REQUIRE(result);
-// }

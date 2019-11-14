@@ -1,5 +1,6 @@
 #include <iostream>
 #include <jsonlint/lexer.hpp>
+#include <jsonlint/errors.hpp>
 #include <jsonlint/utf8.hpp>
 
 namespace jsonlint {
@@ -88,12 +89,15 @@ Token ReadString(Lexer &context) {
         token.literal += "\\" + peek;
 	continue;
       } else if (peek[0] == 'u') {
-        // TODO: parse unicode
 	peek = ReadCharacter(context); // consume 'u'
 	// Expect 4 hex characters here
 	for (size_t i = 0; i < 4; i++) {
 	  peek = PeekCharacter(context);
 	  if (!IsHexCharacter(peek)) {
+	    token.cursor_start = context.cursor - 1;
+	    token.cursor_end = context.cursor - 1;
+	    ReportLexerError(context, token, token, "Failed to parse unicode escape sequence",
+			     "Expected hex character, instead got '" + peek + "'");
 	    throw std::runtime_error("Expected hex character");
 	  }
 	  ReadCharacter(context); // consume hex character

@@ -37,6 +37,8 @@ struct Lexer {
   std::string filename;
   int line;
   int cursor;
+  std::vector<std::tuple<Token, Token, std::string, std::string>> errors;
+  bool silent_mode;
 };
 
 std::vector<Token> Tokenize(Lexer &context);
