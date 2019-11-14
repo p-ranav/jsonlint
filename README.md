@@ -15,11 +15,8 @@
 ## Building `jsonlint`
 
 ```bash
-$ git clone https://github.com/p-ranav/tsparse.git
+$ git clone https://github.com/p-ranav/jsonlint.git
 $ cd tsparse
-$ mkdir build
-$ cd build
-$ cmake ..
-$ make
-$ make check
+$ mkdir build && cd build
+$ cmake .. && make && make check
 ```
