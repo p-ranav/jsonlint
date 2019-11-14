@@ -10,4 +10,16 @@
   <img src="https://img.shields.io/badge/version-1.0-blue.svg?cacheSeconds=2592000" alt="version"/>
 </p>
 
-`jsonlint` is a command-line JSON linter and validator.
+`jsonlint` is a validator and reformatter for JSON.
+
+## Building `jsonlint`
+
+```bash
+$ git clone https://github.com/p-ranav/tsparse.git
+$ cd tsparse
+$ mkdir build
+$ cd build
+$ cmake ..
+$ make
+$ make check
+```
