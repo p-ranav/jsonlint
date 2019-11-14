@@ -1,11 +1,12 @@
 #include <jsonlint/lexer.hpp>
 #include <jsonlint/utf8.hpp>
+#include <iostream>
 
 namespace jsonlint {
 
 namespace details {
 
-std::string ReadCharacter(LexerState &context, bool update_index = true) {
+std::string ReadCharacter(Lexer &context, bool update_index = true) {
   std::string result = "";
   int length = 0;
   // get length of next multi-byte character
@@ -22,46 +23,47 @@ std::string ReadCharacter(LexerState &context, bool update_index = true) {
   return result;
 }
 
-std::string PeekCharacter(LexerState &context) { return ReadCharacter(context, false); }
+std::string PeekCharacter(Lexer &context) { return ReadCharacter(context, false); }
 
-Token ReadString(LexerState &context) {
+Token ReadString(Lexer &context) {
   Token token{TokenType::TK_STRING, "", context.filename, context.line, context.cursor,
               context.cursor};
   // consume first double quote
-  ReadCharacter(context);
+  auto peek = ReadCharacter(context);
   while (true) {
     // peek at next character
-    auto peek = PeekCharacter(context);
+    peek = PeekCharacter(context);
     // check if peek is the start of an escape sequence
     if (peek[0] == '\\') {
       // consume escape character
-      auto next = ReadCharacter(context);
+      peek = ReadCharacter(context);
       // check what comes next
-      auto peek = PeekCharacter(context);
+      peek = PeekCharacter(context);
       if (peek[0] == '"') {
-        next = ReadCharacter(context);
+        peek = ReadCharacter(context);
         // escaped double quote character
-        token.literal += next;
+        token.literal += peek;
         continue;
       } else if (peek[0] == '\\') {
-        next = ReadCharacter(context);
+        peek = ReadCharacter(context);
         // escaped backslash character
-        token.literal += next;
+        token.literal += peek;
+	continue;
       } else if (peek[0] == 'b' || // backspace
                  peek[0] == 'f' || // form feed
                  peek[0] == 'n' || // newline
                  peek[0] == 'r' || // carriage return
                  peek[0] == 't') { // horizontal tab
-        next = ReadCharacter(context);
-        token.literal += '\\' + next[0];
+        peek = ReadCharacter(context);
+        token.literal += '\\' + peek[0];
       } else if (peek[0] == 'u') {
         // TODO: parse unicode
       } else {
-        next = ReadCharacter(context);
-        if (next[0] == 0x0A || next[0] == EOF) {
+        peek = ReadCharacter(context);
+        if (peek[0] == 0x0A || peek[0] == EOF) {
           // TODO: report unterminated string
         }
-        token.literal += next;
+        token.literal += peek;
         continue;
       }
     }
@@ -69,7 +71,9 @@ Token ReadString(LexerState &context) {
     // if not, save character in token literal
     peek = PeekCharacter(context);
     if (peek[0] != '"' && peek[0] != EOF) {
-      token.literal += ReadCharacter(context);
+      peek = ReadCharacter(context);
+      token.literal += peek;
+      continue;
     }
     if (peek[0] == 0x0A || peek[0] == EOF) {
       // TODO: throw formatted error
@@ -81,7 +85,7 @@ Token ReadString(LexerState &context) {
   return token;
 }
 
-Token ReadNumber(LexerState &context, const std::string &character) {
+Token ReadNumber(Lexer &context, const std::string &character) {
   Token token{TokenType::TK_NUMBER, character,      context.filename,
               context.line,         context.cursor, context.cursor};
   std::string next = ReadCharacter(context);
@@ -116,10 +120,16 @@ Token ReadNumber(LexerState &context, const std::string &character) {
   return token;
 }
 
-Token ReadPunctuation(LexerState &context, const std::string &character) {
+Token ReadPunctuation(Lexer &context, const std::string &character) {
   Token token{TokenType::TK_ILLEGAL, character, context.filename, context.line, context.cursor};
   auto next = ReadCharacter(context);
-  if (next == "[") {
+  if (next == ",") {
+    token.type = TokenType::TK_COMMA;
+  } else if (next == "+") {
+    token.type = TokenType::TK_PLUS;
+  } else if (next == "-") {
+    token.type = TokenType::TK_MINUS;
+  } else if (next == "[") {
     token.type = TokenType::TK_LEFT_BRACKET;
   } else if (next == "{") {
     token.type = TokenType::TK_LEFT_BRACE;
@@ -134,7 +144,7 @@ Token ReadPunctuation(LexerState &context, const std::string &character) {
   return token;
 }
 
-void ReadWhitespace(LexerState &context) {
+void ReadWhitespace(Lexer &context) {
   // consume whitespace
   ReadCharacter(context);
   while (true) {
@@ -151,7 +161,7 @@ void ReadWhitespace(LexerState &context) {
 
 } // namespace details
 
-std::vector<Token> Tokenize(LexerState &context) {
+std::vector<Token> Tokenize(Lexer &context) {
   std::vector<Token> result;
   context.index = 0;
   using namespace details;
@@ -175,6 +185,8 @@ std::vector<Token> Tokenize(LexerState &context) {
       continue;
     }
   }
+  Token token{TokenType::TK_EOF, "", context.filename, context.line, context.cursor, context.cursor};
+  result.push_back(token);
   return result;
 }
 

@@ -10,6 +10,9 @@ enum class TokenType {
   TK_TRUE,
   TK_FALSE,
   TK_NULL,
+  TK_COMMA,
+  TK_PLUS,
+  TK_MINUS,
   TK_LEFT_BRACKET,
   TK_RIGHT_BRACKET,
   TK_LEFT_BRACE,
@@ -27,7 +30,7 @@ struct Token {
   int cursor_end;
 };
 
-struct LexerState {
+struct Lexer {
   std::string source;
   int index;
   std::string filename;
@@ -35,6 +38,6 @@ struct LexerState {
   int cursor;
 };
 
-std::vector<Token> Tokenize(LexerState &context);
+std::vector<Token> Tokenize(Lexer &context);
 
 } // namespace jsonlint
