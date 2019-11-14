@@ -116,7 +116,7 @@ Token ReadNumber(Lexer &context, const std::string &character) {
     }
     break;
   }
-  token.cursor_end = token.cursor_start + token.literal.size();
+  token.cursor_end = token.cursor_start + token.literal.size();  
   return token;
 }
 
@@ -159,7 +159,7 @@ Token ReadIdentifier(Lexer &context) {
 }
 
 Token ReadPunctuation(Lexer &context, const std::string &character) {
-  Token token{TokenType::ILLEGAL, character, context.filename, context.line, context.cursor};
+  Token token{TokenType::ILLEGAL, character, context.filename, context.line, context.cursor, context.cursor + 1};
   auto next = ReadCharacter(context);
   if (next == ",") {
     token.type = TokenType::COMMA;
@@ -180,7 +180,6 @@ Token ReadPunctuation(Lexer &context, const std::string &character) {
   } else {
     // TODO: report error - illegal token
   }
-  token.cursor_end = token.cursor_start + token.literal.size();
   return token;
 }
 

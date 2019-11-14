@@ -21,7 +21,7 @@ void ReportError(Parser &context, Token start, Token end, const std::string &bri
 
   std::string file = start.filename;
   unsigned int line = start.line;
-  unsigned int cursor = start.cursor_start;
+  unsigned int cursor = start.cursor_start + 1;
 
   std::string what = file + ":" + std::to_string(line) + ":" + std::to_string(cursor) + ": " +
                      brief_descrition + ". " + detailed_description;
@@ -104,7 +104,7 @@ void ReportError(Parser &context, Token start, Token end, const std::string &bri
 bool ParseElement(Parser &context) {
   auto prefix = context.visitors[context.current.type];
   if (!prefix) {
-    ReportError(context, context.current, context.peek, "Failed to parse JSON",
+    ReportError(context, context.current, context.peek, "Failed to parse element",
                 "Unexpected token '" + context.current.literal + "'");
     return false;
   } else
@@ -117,7 +117,7 @@ bool ParseSignedNumber(Parser &context) {
   // assume current is '-' or '+'
   if (!context.ExpectPeek(TokenType::NUMBER)) {
     context.NextToken();
-    ReportError(context, context.current, context.peek, "Failed to parse JSON",
+    ReportError(context, context.current, context.peek, "Failed to parse signed number",
                 "Expected NUMBER, instead got '" + context.current.literal + "'");
     return false;
   }
@@ -139,15 +139,16 @@ bool ParseArrayLiteral(Parser &context) {
       // comma was a trailing comma, e.g., [1, 2, 3, ]
       //                                           ^^^ we're here
       context.NextToken();
-      ReportError(context, context.current, context.peek, "Failed to parse JSON",
-                  "Expected ']', instead got ','");
+      ReportError(context, context.current, context.peek, "Failed to parse array",
+                  "Expected ']', instead got ',' - You probably have an extra comma at the end of your list, e.g., [\"a\", \"b\",]");
     }
     context.NextToken(); // get past ','
     if (!ParseElement(context))
       return false;
   }
   if (!context.ExpectPeek(TokenType::RIGHT_BRACKET)) {
-    ReportError(context, context.current, context.peek, "Failed to parse JSON",
+    context.NextToken();
+    ReportError(context, context.current, context.peek, "Failed to parse array",
                 "Expected ']', instead got '" + context.current.literal + "'");
     return false;
   }
@@ -162,14 +163,14 @@ bool ParseObject(Parser &context) {
   context.NextToken(); // get past '{'
   while (!context.IsCurrentToken(TokenType::RIGHT_BRACE)) {
     if (!context.IsCurrentToken(TokenType::STRING)) {
-      ReportError(context, context.current, context.peek, "Failed to parse JSON",
+      ReportError(context, context.current, context.peek, "Failed to parse object",
                   "Expected STRING, instead got '" + context.current.literal + "'");
       return false;
     }
     // current is string key
     if (!context.ExpectPeek(TokenType::COLON)) {
       context.NextToken();
-      ReportError(context, context.current, context.peek, "Failed to parse JSON",
+      ReportError(context, context.current, context.peek, "Failed to parse object",
                   "Expected ':', instead got '" + context.current.literal + "'");
       return false;
     }
@@ -179,7 +180,7 @@ bool ParseObject(Parser &context) {
       return false;
     if (!context.IsPeekToken(TokenType::RIGHT_BRACE) && !context.ExpectPeek(TokenType::COMMA)) {
       context.NextToken();
-      ReportError(context, context.current, context.peek, "Failed to parse JSON",
+      ReportError(context, context.current, context.peek, "Failed to parse object",
                   "Expected '}', instead got '" + context.current.literal + "'");
       return false;
     }
