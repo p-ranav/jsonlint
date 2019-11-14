@@ -23,7 +23,7 @@ struct Parser {
   unsigned int current_index;
   Token current;
   Token peek;
-  std::map<TokenType, std::function<void(Parser &)>> visitors;  
+  std::map<TokenType, std::function<bool(Parser &)>> visitors;  
   std::vector<std::tuple<Token, Token, std::string, std::string>> errors;
   explicit Parser(const std::vector<Token> &tokens, const std::string &source);
   void NextToken();
@@ -31,7 +31,7 @@ struct Parser {
   bool IsPeekToken(TokenType value);
   bool ExpectPeek(TokenType value);
   bool ParseJson();
-  void RegisterVisitor(TokenType, std::function<void(Parser &)>);  
+  void RegisterVisitor(TokenType, std::function<bool(Parser &)>);  
 };
   
 }

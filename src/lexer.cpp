@@ -162,6 +162,8 @@ Token ReadPunctuation(Lexer &context, const std::string &character) {
   auto next = ReadCharacter(context);
   if (next == ",") {
     token.type = TokenType::COMMA;
+  } else if (next == ":") {
+    token.type = TokenType::COLON;
   } else if (next == "+") {
     token.type = TokenType::PLUS;
   } else if (next == "-") {

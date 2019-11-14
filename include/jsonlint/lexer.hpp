@@ -10,6 +10,7 @@ enum class TokenType {
   TRUE,
   FALSE,
   NULL_,
+  COLON,
   COMMA,
   PLUS,
   MINUS,

@@ -23,6 +23,66 @@ TEST_CASE("Comma ','", "[lexer]") {
   REQUIRE(tokens[1].literal == "");
 }
 
+TEST_CASE("Colon ':'", "[lexer]") {
+  std::string filename = "";
+  std::string source = ":";
+  Lexer lexer{"", 0, "", 1, 1};
+  lexer.filename = filename;
+  lexer.source = source;
+  auto tokens = Tokenize(lexer);
+  REQUIRE(tokens.size() == 2);
+  REQUIRE(tokens[0].filename == "");
+  REQUIRE(tokens[0].line == 1);
+  REQUIRE(tokens[0].cursor_start == 1);
+  REQUIRE(tokens[0].type == TokenType::COLON);
+  REQUIRE(tokens[0].literal == ":");
+  REQUIRE(tokens[1].filename == "");
+  REQUIRE(tokens[1].line == 1);
+  REQUIRE(tokens[1].cursor_start == 2);
+  REQUIRE(tokens[1].type == TokenType::EOF_);
+  REQUIRE(tokens[1].literal == "");
+}
+
+TEST_CASE("Plus '+'", "[lexer]") {
+  std::string filename = "";
+  std::string source = "+";
+  Lexer lexer{"", 0, "", 1, 1};
+  lexer.filename = filename;
+  lexer.source = source;
+  auto tokens = Tokenize(lexer);
+  REQUIRE(tokens.size() == 2);
+  REQUIRE(tokens[0].filename == "");
+  REQUIRE(tokens[0].line == 1);
+  REQUIRE(tokens[0].cursor_start == 1);
+  REQUIRE(tokens[0].type == TokenType::PLUS);
+  REQUIRE(tokens[0].literal == "+");
+  REQUIRE(tokens[1].filename == "");
+  REQUIRE(tokens[1].line == 1);
+  REQUIRE(tokens[1].cursor_start == 2);
+  REQUIRE(tokens[1].type == TokenType::EOF_);
+  REQUIRE(tokens[1].literal == "");
+}
+
+TEST_CASE("Minus '-'", "[lexer]") {
+  std::string filename = "";
+  std::string source = "-";
+  Lexer lexer{"", 0, "", 1, 1};
+  lexer.filename = filename;
+  lexer.source = source;
+  auto tokens = Tokenize(lexer);
+  REQUIRE(tokens.size() == 2);
+  REQUIRE(tokens[0].filename == "");
+  REQUIRE(tokens[0].line == 1);
+  REQUIRE(tokens[0].cursor_start == 1);
+  REQUIRE(tokens[0].type == TokenType::MINUS);
+  REQUIRE(tokens[0].literal == "-");
+  REQUIRE(tokens[1].filename == "");
+  REQUIRE(tokens[1].line == 1);
+  REQUIRE(tokens[1].cursor_start == 2);
+  REQUIRE(tokens[1].type == TokenType::EOF_);
+  REQUIRE(tokens[1].literal == "");
+}
+
 TEST_CASE("Left Brace '{'", "[lexer]") {
   std::string filename = "";
   std::string source = "{";
