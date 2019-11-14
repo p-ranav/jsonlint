@@ -1,6 +1,6 @@
+#include <iostream>
 #include <jsonlint/lexer.hpp>
 #include <jsonlint/utf8.hpp>
-#include <iostream>
 
 namespace jsonlint {
 
@@ -48,7 +48,7 @@ Token ReadString(Lexer &context) {
         peek = ReadCharacter(context);
         // escaped backslash character
         token.literal += peek;
-	continue;
+        continue;
       } else if (peek[0] == 'b' || // backspace
                  peek[0] == 'f' || // form feed
                  peek[0] == 'n' || // newline
@@ -185,7 +185,8 @@ std::vector<Token> Tokenize(Lexer &context) {
       continue;
     }
   }
-  Token token{TokenType::TK_EOF, "", context.filename, context.line, context.cursor, context.cursor};
+  Token token{TokenType::TK_EOF, "", context.filename, context.line, context.cursor,
+              context.cursor};
   result.push_back(token);
   return result;
 }
