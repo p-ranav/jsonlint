@@ -25,6 +25,7 @@ struct Parser {
   Token peek;
   std::map<TokenType, std::function<bool(Parser &)>> visitors;  
   std::vector<std::tuple<Token, Token, std::string, std::string>> errors;
+  bool silent_mode;
   explicit Parser(const std::vector<Token> &tokens, const std::string &source);
   void NextToken();
   bool IsCurrentToken(TokenType value);
