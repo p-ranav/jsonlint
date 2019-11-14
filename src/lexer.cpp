@@ -188,8 +188,8 @@ Token ReadIdentifier(Lexer &context) {
   else {
     token.cursor_start = token.cursor_start - 1;
     token.cursor_end = context.cursor - 1;
-    ReportError(context, token, token, "Failed to parse keyword",
-		"Expected 'true', 'false', or 'null', instead got '" + token.literal + "'");
+    ReportLexerError(context, token, token, "Failed to parse keyword",
+                     "Expected 'true', 'false', or 'null', instead got '" + token.literal + "'");
   }
   return token;
 }
@@ -215,8 +215,10 @@ Token ReadPunctuation(Lexer &context, const std::string &character) {
   } else if (next == "}") {
     token.type = TokenType::RIGHT_BRACE;
   } else {
-    ReportError(context, token, token, "Failed to parse punctuation",
-		"Unexpected token '" + token.literal + "'");    
+    token.cursor_start = context.cursor - 2;
+    token.cursor_end = context.cursor - 1;
+    ReportLexerError(context, token, token, "Failed to parse punctuation",
+                     "Unexpected token '" + token.literal + "'");
   }
   return token;
 }

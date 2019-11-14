@@ -81,5 +81,6 @@ TEST_CASE("Failed to parse unexpected keyword 'foo'", "[lexer]") {
   auto errors = lexer.errors;
   REQUIRE(errors.size() == 1);
   REQUIRE(std::get<2>(errors[0]) == std::string{"Failed to parse keyword"});
-  REQUIRE(std::get<3>(errors[0]) == std::string{"Expected 'true', 'false', or 'null', instead got 'foo'"});
+  REQUIRE(std::get<3>(errors[0]) ==
+          std::string{"Expected 'true', 'false', or 'null', instead got 'foo'"});
 }
