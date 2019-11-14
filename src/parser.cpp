@@ -107,8 +107,9 @@ bool ParseElement(Parser &context) {
     ReportError(context, context.current, context.peek, "Failed to parse element",
                 "Unexpected token '" + context.current.literal + "'");
     return false;
-  } else
+  } else {
     return prefix(context);
+  }
 }
 
 bool ParsePrimitive(Parser &context) { return true; }
@@ -127,8 +128,10 @@ bool ParseSignedNumber(Parser &context) {
 
 bool ParseArrayLiteral(Parser &context) {
   // assume current is '['
-  if (context.IsPeekToken(TokenType::RIGHT_BRACKET))
+  if (context.IsPeekToken(TokenType::RIGHT_BRACKET)) {
+    context.NextToken();
     return true;
+  }
   // there's at least one element
   context.NextToken(); // get past '['
   if (!ParseElement(context))
@@ -143,7 +146,7 @@ bool ParseArrayLiteral(Parser &context) {
                   "Expected ']', instead got ',' - You probably have an extra comma at the end of your list, e.g., [\"a\", \"b\",]");
     }
     context.NextToken(); // get past ','
-    if (!ParseElement(context))
+    if (!ParseElement(context) || context.IsCurrentToken(TokenType::EOF_))
       return false;
   }
   if (!context.ExpectPeek(TokenType::RIGHT_BRACKET)) {
@@ -157,11 +160,13 @@ bool ParseArrayLiteral(Parser &context) {
 
 bool ParseObject(Parser &context) {
   // assume current is '{'
-  if (context.IsPeekToken(TokenType::RIGHT_BRACE))
+  if (context.IsPeekToken(TokenType::RIGHT_BRACE)) {
+    context.NextToken();
     return true;
+  }
   // there's at least one element
   context.NextToken(); // get past '{'
-  while (!context.IsCurrentToken(TokenType::RIGHT_BRACE)) {
+  while (!context.IsCurrentToken(TokenType::RIGHT_BRACE) && !context.IsCurrentToken(TokenType::EOF_)) {
     if (!context.IsCurrentToken(TokenType::STRING)) {
       ReportError(context, context.current, context.peek, "Failed to parse object",
                   "Expected STRING, instead got '" + context.current.literal + "'");
@@ -176,7 +181,8 @@ bool ParseObject(Parser &context) {
     }
     // current is colon
     context.NextToken(); // get past ':'
-    if (!ParseElement(context))
+    auto value = ParseElement(context);
+    if (!value)
       return false;
     if (!context.IsPeekToken(TokenType::RIGHT_BRACE) && !context.ExpectPeek(TokenType::COMMA)) {
       context.NextToken();
@@ -235,7 +241,6 @@ void Parser::RegisterVisitor(TokenType type, std::function<bool(Parser &)> funct
 
 bool Parser::ParseJson() {
   // TODO: check if tokens is empty
-
   // Initialize current and peek token
   NextToken();
   NextToken();

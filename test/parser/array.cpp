@@ -34,8 +34,8 @@ TEST_CASE("The parser can detect the trailing comma in [1, 2, 3,]", "[parser]") 
   }
   auto errors = parser.errors;
   REQUIRE(errors.size() == 1);
-  REQUIRE(std::get<2>(errors[0]) == std::string{"Failed to parse JSON"});
-  REQUIRE(std::get<3>(errors[0]) == std::string{"Expected ']', instead got ','"});
+  REQUIRE(std::get<2>(errors[0]) == std::string{"Failed to parse array"});
+  REQUIRE(std::get<3>(errors[0]) == std::string{"Expected ']', instead got ',' - You probably have an extra comma at the end of your list, e.g., [\"a\", \"b\",]"});
 }
 
 TEST_CASE("The parser can parse the array [1, 3.14, true, \"Hello\"]", "[parser]") {

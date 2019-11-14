@@ -25,6 +25,37 @@ std::string ReadCharacter(Lexer &context, bool update_index = true) {
 
 std::string PeekCharacter(Lexer &context) { return ReadCharacter(context, false); }
 
+bool IsHexCharacter(const std::string& character) {
+  if (character.size() == 0)
+    return false;
+  if (character.size() == 1) {
+    auto c = character[0];
+    return (c == '0' ||
+	    c == '1' ||
+	    c == '2' ||
+	    c == '3' ||
+	    c == '4' ||
+	    c == '5' ||
+	    c == '6' ||
+	    c == '7' ||
+	    c == '8' ||
+	    c == '9' ||
+	    c == 'a' ||
+	    c == 'b' ||
+	    c == 'c' ||
+	    c == 'd' ||
+	    c == 'e' ||
+	    c == 'f' ||	    
+	    c == 'A' ||
+	    c == 'B' ||
+	    c == 'C' ||
+	    c == 'D' ||
+	    c == 'E' ||
+	    c == 'F');
+  }
+  return false;
+}
+  
 Token ReadString(Lexer &context) {
   Token token{TokenType::STRING, "", context.filename, context.line, context.cursor};
   // consume first double quote
@@ -41,12 +72,12 @@ Token ReadString(Lexer &context) {
       if (peek[0] == '"') {
         peek = ReadCharacter(context);
         // escaped double quote character
-        token.literal += peek;
+        token.literal += "\\" + peek;
         continue;
       } else if (peek[0] == '\\') {
         peek = ReadCharacter(context);
         // escaped backslash character
-        token.literal += peek;
+        token.literal += "\\" + peek;
         continue;
       } else if (peek[0] == 'b' || // backspace
                  peek[0] == 'f' || // form feed
@@ -54,9 +85,19 @@ Token ReadString(Lexer &context) {
                  peek[0] == 'r' || // carriage return
                  peek[0] == 't') { // horizontal tab
         peek = ReadCharacter(context);
-        token.literal += '\\' + peek[0];
+        token.literal += "\\" + peek;
+	continue;
       } else if (peek[0] == 'u') {
         // TODO: parse unicode
+	peek = ReadCharacter(context); // consume 'u'
+	// Expect 4 hex characters here
+	for (size_t i = 0; i < 4; i++) {
+	  peek = PeekCharacter(context);
+	  if (!IsHexCharacter(peek)) {
+	    throw std::runtime_error("Expected hex character");
+	  }
+	  ReadCharacter(context); // consume hex character
+	}
       } else {
         peek = ReadCharacter(context);
         if (peek[0] == 0x0A || peek[0] == EOF) {
