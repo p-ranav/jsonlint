@@ -5,20 +5,20 @@
 namespace jsonlint {
 
 enum class TokenType {
-  TK_STRING,
-  TK_NUMBER,
-  TK_TRUE,
-  TK_FALSE,
-  TK_NULL,
-  TK_COMMA,
-  TK_PLUS,
-  TK_MINUS,
-  TK_LEFT_BRACKET,
-  TK_RIGHT_BRACKET,
-  TK_LEFT_BRACE,
-  TK_RIGHT_BRACE,
-  TK_ILLEGAL,
-  TK_EOF
+  STRING,
+  NUMBER,
+  TRUE,
+  FALSE,
+  NULL_,
+  COMMA,
+  PLUS,
+  MINUS,
+  LEFT_BRACKET,
+  RIGHT_BRACKET,
+  LEFT_BRACE,
+  RIGHT_BRACE,
+  ILLEGAL,
+  EOF_
 };
 
 struct Token {

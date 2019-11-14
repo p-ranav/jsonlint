@@ -14,7 +14,7 @@ TEST_CASE("Whitespace ' '", "[lexer]") {
   REQUIRE(tokens[0].filename == "");
   REQUIRE(tokens[0].line == 1);
   REQUIRE(tokens[0].cursor_start == 2);
-  REQUIRE(tokens[0].type == TokenType::TK_EOF);
+  REQUIRE(tokens[0].type == TokenType::EOF_);
   REQUIRE(tokens[0].literal == "");
 }
 
@@ -29,6 +29,6 @@ TEST_CASE("Whitespace '    '", "[lexer]") {
   REQUIRE(tokens[0].filename == "");
   REQUIRE(tokens[0].line == 1);
   REQUIRE(tokens[0].cursor_start == 5);
-  REQUIRE(tokens[0].type == TokenType::TK_EOF);
+  REQUIRE(tokens[0].type == TokenType::EOF_);
   REQUIRE(tokens[0].literal == "");
 }

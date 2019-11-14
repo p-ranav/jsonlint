@@ -26,8 +26,7 @@ std::string ReadCharacter(Lexer &context, bool update_index = true) {
 std::string PeekCharacter(Lexer &context) { return ReadCharacter(context, false); }
 
 Token ReadString(Lexer &context) {
-  Token token{TokenType::TK_STRING, "", context.filename, context.line, context.cursor,
-              context.cursor};
+  Token token{TokenType::STRING, "", context.filename, context.line, context.cursor};
   // consume first double quote
   auto peek = ReadCharacter(context);
   while (true) {
@@ -86,8 +85,8 @@ Token ReadString(Lexer &context) {
 }
 
 Token ReadNumber(Lexer &context, const std::string &character) {
-  Token token{TokenType::TK_NUMBER, character,      context.filename,
-              context.line,         context.cursor, context.cursor};
+  Token token{TokenType::NUMBER, character,      context.filename,
+              context.line,         context.cursor};
   std::string next = ReadCharacter(context);
   std::string start = next;
   bool e_encountered = false;
@@ -120,23 +119,61 @@ Token ReadNumber(Lexer &context, const std::string &character) {
   return token;
 }
 
+  bool IsIdentifier(const std::string &character) {
+    if (character.size() == 0)
+      return false;
+    for (auto& c: character) {
+      if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || (c == '_') ||
+	  (c == '$') || ((unsigned char)c >= 0x80)) {
+	continue;
+      } else {
+	return false;
+      }
+    }
+    return true;
+  }
+
+Token ReadIdentifier(Lexer &context) {
+  Token token{TokenType::ILLEGAL, "", context.filename, context.line, context.cursor};
+  std::string peek = "";
+  while (true) {
+    peek = PeekCharacter(context);
+    if (IsIdentifier(peek)) {
+      token.literal += peek;
+      peek = ReadCharacter(context);
+      continue;
+    }
+    break;
+  }
+  if (token.literal == "true")
+    token.type = TokenType::TRUE;
+  else if (token.literal == "false")
+    token.type = TokenType::FALSE;
+  else if (token.literal == "null")
+    token.type = TokenType::NULL_;
+  else {
+    // TODO: report error - unexpected token
+  }  
+  return token;
+}
+
 Token ReadPunctuation(Lexer &context, const std::string &character) {
-  Token token{TokenType::TK_ILLEGAL, character, context.filename, context.line, context.cursor};
+  Token token{TokenType::ILLEGAL, character, context.filename, context.line, context.cursor};
   auto next = ReadCharacter(context);
   if (next == ",") {
-    token.type = TokenType::TK_COMMA;
+    token.type = TokenType::COMMA;
   } else if (next == "+") {
-    token.type = TokenType::TK_PLUS;
+    token.type = TokenType::PLUS;
   } else if (next == "-") {
-    token.type = TokenType::TK_MINUS;
+    token.type = TokenType::MINUS;
   } else if (next == "[") {
-    token.type = TokenType::TK_LEFT_BRACKET;
+    token.type = TokenType::LEFT_BRACKET;
   } else if (next == "{") {
-    token.type = TokenType::TK_LEFT_BRACE;
+    token.type = TokenType::LEFT_BRACE;
   } else if (next == "]") {
-    token.type = TokenType::TK_RIGHT_BRACKET;
+    token.type = TokenType::RIGHT_BRACKET;
   } else if (next == "}") {
-    token.type = TokenType::TK_RIGHT_BRACE;
+    token.type = TokenType::RIGHT_BRACE;
   } else {
     // TODO: report error - illegal token
   }
@@ -174,6 +211,8 @@ std::vector<Token> Tokenize(Lexer &context) {
         result.push_back(ReadString(context));
       } else if (ispunct(peek[0])) {
         result.push_back(ReadPunctuation(context, peek));
+      } else if (IsIdentifier(peek)) {
+        result.push_back(ReadIdentifier(context));
       } else if (peek[0] == 0x20 || peek[0] == 0x0D || peek[0] == 0x0A || peek[0] == 0x09) {
         ReadWhitespace(context);
       }
@@ -185,7 +224,7 @@ std::vector<Token> Tokenize(Lexer &context) {
       continue;
     }
   }
-  Token token{TokenType::TK_EOF, "", context.filename, context.line, context.cursor,
+  Token token{TokenType::EOF_, "", context.filename, context.line, context.cursor,
               context.cursor};
   result.push_back(token);
   return result;

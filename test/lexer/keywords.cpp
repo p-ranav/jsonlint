@@ -3,9 +3,9 @@
 #include <jsonlint/lexer.hpp>
 using namespace jsonlint;
 
-TEST_CASE("String \"Hello World\"", "[lexer]") {
+TEST_CASE("Keyword 'true'", "[lexer]") {
   std::string filename = "";
-  std::string source = "\"Hello World\"";
+  std::string source = "true";
   Lexer lexer{"", 0, "", 1, 1};
   lexer.filename = filename;
   lexer.source = source;
@@ -14,19 +14,18 @@ TEST_CASE("String \"Hello World\"", "[lexer]") {
   REQUIRE(tokens[0].filename == "");
   REQUIRE(tokens[0].line == 1);
   REQUIRE(tokens[0].cursor_start == 1);
-  REQUIRE(tokens[0].type == TokenType::STRING);
-  REQUIRE(tokens[0].literal == "Hello World");
+  REQUIRE(tokens[0].type == TokenType::TRUE);
+  REQUIRE(tokens[0].literal == source);
   REQUIRE(tokens[1].filename == "");
   REQUIRE(tokens[1].line == 1);
-  REQUIRE(tokens[1].cursor_start == 14);
+  REQUIRE(tokens[1].cursor_start == source.size() + 1);
   REQUIRE(tokens[1].type == TokenType::EOF_);
   REQUIRE(tokens[1].literal == "");
 }
 
-TEST_CASE("String \"Hello 世界\"", "[lexer]") {
-  setlocale(LC_ALL, "");
+TEST_CASE("Keyword 'false'", "[lexer]") {
   std::string filename = "";
-  std::string source = "\"Hello 世界\"";
+  std::string source = "false";
   Lexer lexer{"", 0, "", 1, 1};
   lexer.filename = filename;
   lexer.source = source;
@@ -35,19 +34,18 @@ TEST_CASE("String \"Hello 世界\"", "[lexer]") {
   REQUIRE(tokens[0].filename == "");
   REQUIRE(tokens[0].line == 1);
   REQUIRE(tokens[0].cursor_start == 1);
-  REQUIRE(tokens[0].type == TokenType::STRING);
-  REQUIRE(tokens[0].literal == "Hello 世界");
+  REQUIRE(tokens[0].type == TokenType::FALSE);
+  REQUIRE(tokens[0].literal == source);
   REQUIRE(tokens[1].filename == "");
   REQUIRE(tokens[1].line == 1);
-  REQUIRE(tokens[1].cursor_start == 11);
+  REQUIRE(tokens[1].cursor_start == source.size() + 1);
   REQUIRE(tokens[1].type == TokenType::EOF_);
   REQUIRE(tokens[1].literal == "");
 }
 
-TEST_CASE("String \"ο Δίας\"", "[lexer]") {
-  setlocale(LC_ALL, "");
+TEST_CASE("Keyword 'null'", "[lexer]") {
   std::string filename = "";
-  std::string source = "\"ο Δίας\"";
+  std::string source = "null";
   Lexer lexer{"", 0, "", 1, 1};
   lexer.filename = filename;
   lexer.source = source;
@@ -56,11 +54,11 @@ TEST_CASE("String \"ο Δίας\"", "[lexer]") {
   REQUIRE(tokens[0].filename == "");
   REQUIRE(tokens[0].line == 1);
   REQUIRE(tokens[0].cursor_start == 1);
-  REQUIRE(tokens[0].type == TokenType::STRING);
-  REQUIRE(tokens[0].literal == "ο Δίας");
+  REQUIRE(tokens[0].type == TokenType::NULL_);
+  REQUIRE(tokens[0].literal == source);
   REQUIRE(tokens[1].filename == "");
   REQUIRE(tokens[1].line == 1);
-  REQUIRE(tokens[1].cursor_start == 9);
+  REQUIRE(tokens[1].cursor_start == source.size() + 1);
   REQUIRE(tokens[1].type == TokenType::EOF_);
   REQUIRE(tokens[1].literal == "");
 }

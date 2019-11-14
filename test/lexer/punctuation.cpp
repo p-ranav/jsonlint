@@ -14,12 +14,12 @@ TEST_CASE("Comma ','", "[lexer]") {
   REQUIRE(tokens[0].filename == "");
   REQUIRE(tokens[0].line == 1);
   REQUIRE(tokens[0].cursor_start == 1);
-  REQUIRE(tokens[0].type == TokenType::TK_COMMA);
+  REQUIRE(tokens[0].type == TokenType::COMMA);
   REQUIRE(tokens[0].literal == ",");
   REQUIRE(tokens[1].filename == "");
   REQUIRE(tokens[1].line == 1);
   REQUIRE(tokens[1].cursor_start == 2);
-  REQUIRE(tokens[1].type == TokenType::TK_EOF);
+  REQUIRE(tokens[1].type == TokenType::EOF_);
   REQUIRE(tokens[1].literal == "");
 }
 
@@ -34,12 +34,12 @@ TEST_CASE("Left Brace '{'", "[lexer]") {
   REQUIRE(tokens[0].filename == "");
   REQUIRE(tokens[0].line == 1);
   REQUIRE(tokens[0].cursor_start == 1);
-  REQUIRE(tokens[0].type == TokenType::TK_LEFT_BRACE);
+  REQUIRE(tokens[0].type == TokenType::LEFT_BRACE);
   REQUIRE(tokens[0].literal == "{");
   REQUIRE(tokens[1].filename == "");
   REQUIRE(tokens[1].line == 1);
   REQUIRE(tokens[1].cursor_start == 2);
-  REQUIRE(tokens[1].type == TokenType::TK_EOF);
+  REQUIRE(tokens[1].type == TokenType::EOF_);
   REQUIRE(tokens[1].literal == "");
 }
 
@@ -54,12 +54,12 @@ TEST_CASE("Left Bracket '['", "[lexer]") {
   REQUIRE(tokens[0].filename == "");
   REQUIRE(tokens[0].line == 1);
   REQUIRE(tokens[0].cursor_start == 1);
-  REQUIRE(tokens[0].type == TokenType::TK_LEFT_BRACKET);
+  REQUIRE(tokens[0].type == TokenType::LEFT_BRACKET);
   REQUIRE(tokens[0].literal == "[");
   REQUIRE(tokens[1].filename == "");
   REQUIRE(tokens[1].line == 1);
   REQUIRE(tokens[1].cursor_start == 2);
-  REQUIRE(tokens[1].type == TokenType::TK_EOF);
+  REQUIRE(tokens[1].type == TokenType::EOF_);
   REQUIRE(tokens[1].literal == "");
 }
 
@@ -74,12 +74,12 @@ TEST_CASE("Right Brace '}'", "[lexer]") {
   REQUIRE(tokens[0].filename == "");
   REQUIRE(tokens[0].line == 1);
   REQUIRE(tokens[0].cursor_start == 1);
-  REQUIRE(tokens[0].type == TokenType::TK_RIGHT_BRACE);
+  REQUIRE(tokens[0].type == TokenType::RIGHT_BRACE);
   REQUIRE(tokens[0].literal == "}");
   REQUIRE(tokens[1].filename == "");
   REQUIRE(tokens[1].line == 1);
   REQUIRE(tokens[1].cursor_start == 2);
-  REQUIRE(tokens[1].type == TokenType::TK_EOF);
+  REQUIRE(tokens[1].type == TokenType::EOF_);
   REQUIRE(tokens[1].literal == "");
 }
 
@@ -94,11 +94,11 @@ TEST_CASE("Right Bracket ']'", "[lexer]") {
   REQUIRE(tokens[0].filename == "");
   REQUIRE(tokens[0].line == 1);
   REQUIRE(tokens[0].cursor_start == 1);
-  REQUIRE(tokens[0].type == TokenType::TK_RIGHT_BRACKET);
+  REQUIRE(tokens[0].type == TokenType::RIGHT_BRACKET);
   REQUIRE(tokens[0].literal == "]");
   REQUIRE(tokens[1].filename == "");
   REQUIRE(tokens[1].line == 1);
   REQUIRE(tokens[1].cursor_start == 2);
-  REQUIRE(tokens[1].type == TokenType::TK_EOF);
+  REQUIRE(tokens[1].type == TokenType::EOF_);
   REQUIRE(tokens[1].literal == "");
 }
