@@ -1,4 +1,5 @@
 #include <jsonlint/errors.hpp>
+#include <fstream>
 
 namespace jsonlint {
 
@@ -11,6 +12,23 @@ unsigned int GetNumberOfDigits(unsigned int number) {
     digits += 1;
   }
   return digits;
+}
+
+bool GetLines(std::string filename, std::vector<std::string> & result) {
+	std::ifstream stream(filename.c_str());
+ 	if (!stream) {
+		std::cerr << "Cannot open the File : " << filename << std::endl;
+		return false;
+	}
+	std::string line;
+	// Read the next line from File untill it reaches the end.
+	while (std::getline(stream, line)) {
+		// Line contains string of length > 0 then save it in vector
+		if(line.size() > 0)
+			result.push_back(line);
+	}
+	stream.close();
+	return true;
 }
 
 template <typename Stage>
@@ -53,8 +71,13 @@ void ReportError(Stage &context, Token start, Token end, const std::string &brie
   if (message_carets == " " || message_carets == "  ") {
     message_carets = " ^ ";
   }
-
-  std::vector<std::string> lines = string::Split(context.source, "\n");
+  std::cout << "Splitting\n";
+  std::vector<std::string> lines;
+  auto return_val = GetLines(start.filename, lines);
+  if (!return_val) {
+    throw std::runtime_error(what);
+    return;
+  }
   std::string error_line = lines[line - 1];
 
   std::cout << termcolor::red << termcolor::bold << "error: " << brief_description

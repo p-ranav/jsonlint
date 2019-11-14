@@ -142,12 +142,12 @@ Token ReadNumber(Lexer &context, const std::string &character) {
          isdigit(peek[0]))) {
       if (peek[0] == 'e' || peek[0] == 'E')
         e_encountered = true;
-      next = ReadCharacter(context);
-      token.literal += next;
-      prev = next;
-      continue;
+      peek = ReadCharacter(context);
+      token.literal += peek;
+      prev = peek;
+    } else {
+      break;
     }
-    break;
   }
   token.cursor_end = token.cursor_start + token.literal.size();
   return token;
