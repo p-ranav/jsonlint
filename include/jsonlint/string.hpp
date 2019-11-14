@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 
-namespace tsparse {
+namespace jsonlint {
 
 namespace string {
 
