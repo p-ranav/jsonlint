@@ -62,3 +62,24 @@ TEST_CASE("Keyword 'null'", "[lexer]") {
   REQUIRE(tokens[1].type == TokenType::EOF_);
   REQUIRE(tokens[1].literal == "");
 }
+
+#include <iostream>
+
+TEST_CASE("Failed to parse unexpected keyword 'foo'", "[lexer]") {
+  std::string filename = "";
+  std::string source = "foo";
+  Lexer lexer{"", 0, "", 1, 1};
+  lexer.filename = filename;
+  lexer.source = source;
+  lexer.silent_mode = true;
+  bool exception_thrown = false;
+  try {
+    auto tokens = Tokenize(lexer);
+  } catch (std::runtime_error &e) {
+    exception_thrown = true;
+  }
+  auto errors = lexer.errors;
+  REQUIRE(errors.size() == 1);
+  REQUIRE(std::get<2>(errors[0]) == std::string{"Failed to parse keyword"});
+  REQUIRE(std::get<3>(errors[0]) == std::string{"Expected 'true', 'false', or 'null', instead got 'foo'"});
+}

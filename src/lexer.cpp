@@ -186,6 +186,8 @@ Token ReadIdentifier(Lexer &context) {
   else if (token.literal == "null")
     token.type = TokenType::NULL_;
   else {
+    token.cursor_start = token.cursor_start - 1;
+    token.cursor_end = context.cursor - 1;
     ReportError(context, token, token, "Failed to parse keyword",
 		"Expected 'true', 'false', or 'null', instead got '" + token.literal + "'");
   }
