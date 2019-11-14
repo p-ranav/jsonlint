@@ -99,4 +99,4 @@ std::vector<std::string> FindRegex(const std::string &input_string,
 
 } // namespace string
 
-} // namespace tsparse
+} // namespace jsonlint

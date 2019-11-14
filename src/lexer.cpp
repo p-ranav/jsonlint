@@ -85,8 +85,7 @@ Token ReadString(Lexer &context) {
 }
 
 Token ReadNumber(Lexer &context, const std::string &character) {
-  Token token{TokenType::NUMBER, character,      context.filename,
-              context.line,         context.cursor};
+  Token token{TokenType::NUMBER, character, context.filename, context.line, context.cursor};
   std::string next = ReadCharacter(context);
   std::string start = next;
   bool e_encountered = false;
@@ -119,19 +118,19 @@ Token ReadNumber(Lexer &context, const std::string &character) {
   return token;
 }
 
-  bool IsIdentifier(const std::string &character) {
-    if (character.size() == 0)
+bool IsIdentifier(const std::string &character) {
+  if (character.size() == 0)
+    return false;
+  for (auto &c : character) {
+    if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || (c == '_') ||
+        (c == '$') || ((unsigned char)c >= 0x80)) {
+      continue;
+    } else {
       return false;
-    for (auto& c: character) {
-      if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || (c == '_') ||
-	  (c == '$') || ((unsigned char)c >= 0x80)) {
-	continue;
-      } else {
-	return false;
-      }
     }
-    return true;
   }
+  return true;
+}
 
 Token ReadIdentifier(Lexer &context) {
   Token token{TokenType::ILLEGAL, "", context.filename, context.line, context.cursor};
@@ -153,7 +152,7 @@ Token ReadIdentifier(Lexer &context) {
     token.type = TokenType::NULL_;
   else {
     // TODO: report error - unexpected token
-  }  
+  }
   return token;
 }
 
@@ -226,8 +225,7 @@ std::vector<Token> Tokenize(Lexer &context) {
       continue;
     }
   }
-  Token token{TokenType::EOF_, "", context.filename, context.line, context.cursor,
-              context.cursor};
+  Token token{TokenType::EOF_, "", context.filename, context.line, context.cursor, context.cursor};
   result.push_back(token);
   return result;
 }

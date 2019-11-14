@@ -27,8 +27,8 @@ void ReportError(Parser &context, Token start, Token end, const std::string &bri
                      brief_descrition + ". " + detailed_description;
 
   if (context.silent_mode) {
-     throw std::runtime_error(what);
-     return;
+    throw std::runtime_error(what);
+    return;
   }
 
   std::vector<unsigned int> line_numbers = {};
@@ -99,41 +99,40 @@ void ReportError(Parser &context, Token start, Token end, const std::string &bri
   std::cout << blanks << " |  " << std::endl;
   std::cout << std::endl;
   throw std::runtime_error(what);
-}  
-  
+}
+
 bool ParseElement(Parser &context) {
   auto prefix = context.visitors[context.current.type];
   if (!prefix) {
     ReportError(context, context.current, context.peek, "Failed to parse JSON",
-		"Unexpected token '" + context.current.literal + "'");
+                "Unexpected token '" + context.current.literal + "'");
     return false;
   } else
     return prefix(context);
 }
 
-bool ParsePrimitive(Parser &context) {
-  return true;
-}
+bool ParsePrimitive(Parser &context) { return true; }
 
 bool ParseSignedNumber(Parser &context) {
   // assume current is '-' or '+'
   if (!context.ExpectPeek(TokenType::NUMBER)) {
     context.NextToken();
     ReportError(context, context.current, context.peek, "Failed to parse JSON",
-		"Expected 'NUMBER', instead got '" + context.current.literal + "'");    
+                "Expected NUMBER, instead got '" + context.current.literal + "'");
     return false;
   }
   // current is number
   return true;
-}  
-  
+}
+
 bool ParseArrayLiteral(Parser &context) {
   // assume current is '['
   if (context.IsPeekToken(TokenType::RIGHT_BRACKET))
     return true;
   // there's at least one element
   context.NextToken(); // get past '['
-  if (!ParseElement(context)) return false;
+  if (!ParseElement(context))
+    return false;
   while (context.IsPeekToken(TokenType::COMMA)) {
     context.NextToken(); // current is ','
     if (context.IsPeekToken(TokenType::RIGHT_BRACKET)) {
@@ -141,14 +140,15 @@ bool ParseArrayLiteral(Parser &context) {
       //                                           ^^^ we're here
       context.NextToken();
       ReportError(context, context.current, context.peek, "Failed to parse JSON",
-		  "Expected ']', instead got ','");            
+                  "Expected ']', instead got ','");
     }
     context.NextToken(); // get past ','
-    if (!ParseElement(context)) return false;
+    if (!ParseElement(context))
+      return false;
   }
   if (!context.ExpectPeek(TokenType::RIGHT_BRACKET)) {
     ReportError(context, context.current, context.peek, "Failed to parse JSON",
-		"Expected ']', instead got '" + context.current.literal + "'");      
+                "Expected ']', instead got '" + context.current.literal + "'");
     return false;
   }
   return true;
@@ -163,34 +163,36 @@ bool ParseObject(Parser &context) {
   while (!context.IsCurrentToken(TokenType::RIGHT_BRACE)) {
     if (!context.IsCurrentToken(TokenType::STRING)) {
       ReportError(context, context.current, context.peek, "Failed to parse JSON",
-		  "Expected 'STRING', instead got '" + context.current.literal + "'");          
+                  "Expected STRING, instead got '" + context.current.literal + "'");
       return false;
     }
     // current is string key
     if (!context.ExpectPeek(TokenType::COLON)) {
       context.NextToken();
       ReportError(context, context.current, context.peek, "Failed to parse JSON",
-		  "Expected ':', instead got '" + context.current.literal + "'");                
+                  "Expected ':', instead got '" + context.current.literal + "'");
       return false;
     }
     // current is colon
     context.NextToken(); // get past ':'
-    if (!ParseElement(context)) return false;
+    if (!ParseElement(context))
+      return false;
     if (!context.IsPeekToken(TokenType::RIGHT_BRACE) && !context.ExpectPeek(TokenType::COMMA)) {
       context.NextToken();
       ReportError(context, context.current, context.peek, "Failed to parse JSON",
-		  "Expected '}', instead got '" + context.current.literal + "'");      
+                  "Expected '}', instead got '" + context.current.literal + "'");
       return false;
     }
-    context.NextToken();    
-  }    
+    context.NextToken();
+  }
   return true;
 }
-  
-}  
-  
-Parser::Parser(const std::vector<Token>& tokens, const std::string &source) :
-  current_index(0), current(Token{}), peek(Token{}), tokens(tokens), source(source), errors({}), silent_mode(true) {  
+
+} // namespace details
+
+Parser::Parser(const std::vector<Token> &tokens, const std::string &source)
+    : current_index(0), current(Token{}), peek(Token{}), tokens(tokens), source(source), errors({}),
+      silent_mode(true) {
   RegisterVisitor(TokenType::NUMBER, details::ParsePrimitive);
   RegisterVisitor(TokenType::STRING, details::ParsePrimitive);
   RegisterVisitor(TokenType::TRUE, details::ParsePrimitive);
@@ -223,8 +225,7 @@ bool Parser::ExpectPeek(TokenType value) {
   }
 }
 
-void Parser::RegisterVisitor(TokenType type,
-			     std::function<bool(Parser &)> function) {
+void Parser::RegisterVisitor(TokenType type, std::function<bool(Parser &)> function) {
   if (visitors.find(type) != visitors.end())
     visitors[type] = function;
   else
@@ -236,10 +237,16 @@ bool Parser::ParseJson() {
   NextToken();
   NextToken();
   if (!IsPeekToken(TokenType::EOF_)) {
-    if (!details::ParseElement(*this)) return false;
+    if (!details::ParseElement(*this))
+      return false;
   }
-  // TODO: expect EOF
+  if (!ExpectPeek(TokenType::EOF_)) {
+    NextToken();
+    details::ReportError(*this, current, peek, "Failed to parse JSON",
+                         "Expected EOF, instead got '" + current.literal + "'");
+    return false;
+  }
   return true;
 }
-  
-}
+
+} // namespace jsonlint

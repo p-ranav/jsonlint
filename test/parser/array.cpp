@@ -25,16 +25,16 @@ TEST_CASE("The parser can detect the trailing comma in [1, 2, 3,]", "[parser]") 
   auto tokens = Tokenize(lexer);
   Parser parser(tokens, source);
   parser.silent_mode = true;
-  bool exception_thrown = false;  
+  bool exception_thrown = false;
   try {
     auto result = parser.ParseJson();
-  } catch (std::runtime_error& e) {
+  } catch (std::runtime_error &e) {
     exception_thrown = true;
   }
   auto errors = parser.errors;
   REQUIRE(errors.size() == 1);
   REQUIRE(std::get<2>(errors[0]) == std::string{"Failed to parse JSON"});
-  REQUIRE(std::get<3>(errors[0]) == std::string{"Expected ']', instead got ','"});  
+  REQUIRE(std::get<3>(errors[0]) == std::string{"Expected ']', instead got ','"});
 }
 
 TEST_CASE("The parser can parse the array [1, 3.14, true, \"Hello\"]", "[parser]") {
@@ -61,7 +61,8 @@ TEST_CASE("The parser can parse the array [1, 3.14, true, \"Hello\", [4, 5, 6]]"
   REQUIRE(result);
 }
 
-TEST_CASE("The parser can parse the array [{\"a\": 1, \"b\": [2, 3]}, {\"c\": true, \"d\": null}]", "[parser]") {
+TEST_CASE("The parser can parse the array [{\"a\": 1, \"b\": [2, 3]}, {\"c\": true, \"d\": null}]",
+          "[parser]") {
   std::string filename = "";
   std::string source = "[{\"a\": 1, \"b\": [2, 3]}, {\"c\": true, \"d\": null}]";
   Lexer lexer{"", 0, "", 1, 1};
@@ -72,4 +73,3 @@ TEST_CASE("The parser can parse the array [{\"a\": 1, \"b\": [2, 3]}, {\"c\": tr
   auto result = parser.ParseJson();
   REQUIRE(result);
 }
-
