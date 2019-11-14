@@ -10,7 +10,7 @@
   <img src="https://img.shields.io/badge/version-1.0-blue.svg?cacheSeconds=2592000" alt="version"/>
 </p>
 
-`jsonlint` is a validator and reformatter for JSON.
+`jsonlint` is a command-line tool for validating JSON.
 
 ## Building `jsonlint`
 
