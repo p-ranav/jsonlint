@@ -14,6 +14,7 @@ int main(int argc, char *argv[]) {
     exit(0);
   }
   auto filename = program.get<std::string>("file");
+  std::cout << "Parsing " << filename << std::endl;
   std::string source = "";
   try {
     std::ifstream stream(filename, std::ifstream::in);

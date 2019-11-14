@@ -148,22 +148,23 @@ void Parser::RegisterVisitor(TokenType type, std::function<bool(Parser &)> funct
 }
 
 bool Parser::ParseJson() {
-  // TODO: check if tokens is empty
-  // Initialize current and peek token
-  NextToken();
-  NextToken();
-  if (!IsPeekToken(TokenType::EOF_)) {
-    if (!details::ParseElement(*this))
-      return false;
-  }
-  if (!ExpectPeek(TokenType::EOF_)) {
+  if (!tokens.empty()) {
+    // Initialize current and peek token
     NextToken();
-    details::ReportParserError(*this, current, peek, "Failed to parse JSON",
-                               "Expected EOF, instead got '" + current.literal + "'");
-    return false;
+    NextToken();
+    if (!IsPeekToken(TokenType::EOF_)) {
+      if (!details::ParseElement(*this))
+	return false;
+    }
+    if (!ExpectPeek(TokenType::EOF_)) {
+      NextToken();
+      details::ReportParserError(*this, current, peek, "Failed to parse JSON",
+				 "Expected EOF, instead got '" + current.literal + "'");
+      return false;
+    }
   }
   if (!silent_mode) {
-    std::cout << current.filename << ": " << termcolor::green << termcolor::bold << "Valid JSON"
+    std::cout << termcolor::green << termcolor::bold << "Valid JSON"
               << termcolor::reset << std::endl;
   }
   return true;
