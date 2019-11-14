@@ -1,5 +1,5 @@
-#include <jsonlint/errors.hpp>
 #include <fstream>
+#include <jsonlint/errors.hpp>
 
 namespace jsonlint {
 
@@ -14,21 +14,21 @@ unsigned int GetNumberOfDigits(unsigned int number) {
   return digits;
 }
 
-bool GetLines(std::string filename, std::vector<std::string> & result) {
-	std::ifstream stream(filename.c_str());
- 	if (!stream) {
-		std::cerr << "Cannot open the File : " << filename << std::endl;
-		return false;
-	}
-	std::string line;
-	// Read the next line from File untill it reaches the end.
-	while (std::getline(stream, line)) {
-		// Line contains string of length > 0 then save it in vector
-		if(line.size() > 0)
-			result.push_back(line);
-	}
-	stream.close();
-	return true;
+bool GetLines(std::string filename, std::vector<std::string> &result) {
+  std::ifstream stream(filename.c_str());
+  if (!stream) {
+    std::cerr << "Cannot open the File : " << filename << std::endl;
+    return false;
+  }
+  std::string line;
+  // Read the next line from File untill it reaches the end.
+  while (std::getline(stream, line)) {
+    // Line contains string of length > 0 then save it in vector
+    if (line.size() > 0)
+      result.push_back(line);
+  }
+  stream.close();
+  return true;
 }
 
 template <typename Stage>
@@ -65,8 +65,7 @@ void ReportError(Stage &context, Token start, Token end, const std::string &brie
   if (start.cursor_start == end.cursor_start && start.cursor_end == end.cursor_end) {
     // start and end are the same token
     message_carets = " ^ ";
-  }
-  else if (end.cursor_start - start.cursor_end == 1) {
+  } else if (end.cursor_start - start.cursor_end == 1) {
     message_carets = " " + std::string(start.cursor_end - start.cursor_start, '^') + " ";
   } else if (end.cursor_start - start.cursor_end > 1) {
     message_carets = " " + std::string(end.cursor_start - cursor - 1, '^') + " ";
@@ -80,7 +79,7 @@ void ReportError(Stage &context, Token start, Token end, const std::string &brie
   std::vector<std::string> lines;
   if (start.filename != "") {
     auto return_val = GetLines(start.filename, lines);
-    if (!return_val) {    
+    if (!return_val) {
       throw std::runtime_error(what);
       return;
     }

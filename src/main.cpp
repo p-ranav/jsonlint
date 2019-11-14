@@ -1,6 +1,7 @@
 #include <argparse/argparse.hpp>
 #include <fstream>
 #include <jsonlint/parser.hpp>
+#include <termcolor/termcolor.hpp>
 using namespace jsonlint;
 
 int main(int argc, char *argv[]) {
@@ -14,18 +15,22 @@ int main(int argc, char *argv[]) {
     exit(0);
   }
   auto filename = program.get<std::string>("file");
-  std::cout << "Parsing " << filename << std::endl;
   std::string source = "";
   try {
     std::ifstream stream(filename, std::ifstream::in);
-    source =
-        std::string((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
-  } catch (std::exception) {
-    std::cerr << "error: failed to open " << filename << std::endl;
+    if (stream.is_open()) {
+      std::cout << "Parsing " << filename << std::endl;
+      source =
+          std::string((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
+      Lexer lexer{source, 0, filename, 1, 1};
+      auto tokens = Tokenize(lexer);
+      Parser parser(tokens, source);
+      parser.ParseJson();
+    } else {
+      throw std::runtime_error("error: failed to open " + filename);
+    }
+  } catch (std::runtime_error &e) {
+    std::cerr << termcolor::red << termcolor::bold << e.what() << std::endl;
   }
-  Lexer lexer{source, 0, filename, 1, 1};
-  auto tokens = Tokenize(lexer);
-  Parser parser(tokens, source);
-  parser.ParseJson();
   return 0;
 }

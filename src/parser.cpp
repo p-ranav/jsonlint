@@ -1,8 +1,8 @@
 #include <jsonlint/errors.hpp>
 #include <jsonlint/parser.hpp>
 #include <jsonlint/string.hpp>
-#include <termcolor/termcolor.hpp>
 #include <set>
+#include <termcolor/termcolor.hpp>
 
 namespace jsonlint {
 
@@ -86,7 +86,7 @@ bool ParseObject(Parser &context) {
       keys.insert(context.current.literal);
     else {
       ReportParserError(context, context.current, context.current, "Failed to parse object",
-                        "Duplicate key '" + context.current.literal + "'");      
+                        "Duplicate key '" + context.current.literal + "'");
     }
     // current is string key
     if (!context.ExpectPeek(TokenType::COLON)) {
@@ -172,18 +172,18 @@ bool Parser::ParseJson() {
     NextToken();
     if (!IsPeekToken(TokenType::EOF_)) {
       if (!details::ParseElement(*this))
-	return false;
+        return false;
     }
     if (!ExpectPeek(TokenType::EOF_)) {
       NextToken();
       details::ReportParserError(*this, current, peek, "Failed to parse JSON",
-				 "Expected EOF, instead got '" + current.literal + "'");
+                                 "Expected EOF, instead got '" + current.literal + "'");
       return false;
     }
   }
   if (!silent_mode) {
-    std::cout << termcolor::green << termcolor::bold << "Valid JSON"
-              << termcolor::reset << std::endl;
+    std::cout << termcolor::green << termcolor::bold << "Valid JSON" << termcolor::reset
+              << std::endl;
   }
   return true;
 }
