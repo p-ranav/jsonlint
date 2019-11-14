@@ -12,6 +12,7 @@ TEST_CASE("The parser can parse the number '0'", "[parser]") {
   lexer.source = source;
   auto tokens = Tokenize(lexer);
   Parser parser(tokens, source);
+  parser.silent_mode = true;
   auto result = parser.ParseJson();
   REQUIRE(result);
 }
@@ -24,6 +25,7 @@ TEST_CASE("The parser can parse the number '-1'", "[parser]") {
   lexer.source = source;
   auto tokens = Tokenize(lexer);
   Parser parser(tokens, source);
+  parser.silent_mode = true;
   auto result = parser.ParseJson();
   REQUIRE(result);
 }
@@ -36,6 +38,7 @@ TEST_CASE("The parser can parse the number '+2'", "[parser]") {
   lexer.source = source;
   auto tokens = Tokenize(lexer);
   Parser parser(tokens, source);
+  parser.silent_mode = true;
   auto result = parser.ParseJson();
   REQUIRE(result);
 }
@@ -48,6 +51,7 @@ TEST_CASE("The parser can parse the number '123E-4'", "[parser]") {
   lexer.source = source;
   auto tokens = Tokenize(lexer);
   Parser parser(tokens, source);
+  parser.silent_mode = true;
   auto result = parser.ParseJson();
   REQUIRE(result);
 }

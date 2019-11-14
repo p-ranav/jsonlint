@@ -12,6 +12,7 @@ TEST_CASE("The parser can parse the array [1, 2, 3]", "[parser]") {
   lexer.source = source;
   auto tokens = Tokenize(lexer);
   Parser parser(tokens, source);
+  parser.silent_mode = true;
   auto result = parser.ParseJson();
   REQUIRE(result);
 }
@@ -45,6 +46,7 @@ TEST_CASE("The parser can parse the array [1, 3.14, true, \"Hello\"]", "[parser]
   lexer.source = source;
   auto tokens = Tokenize(lexer);
   Parser parser(tokens, source);
+  parser.silent_mode = true;
   auto result = parser.ParseJson();
   REQUIRE(result);
 }
@@ -57,6 +59,7 @@ TEST_CASE("The parser can parse the array [1, 3.14, true, \"Hello\", [4, 5, 6]]"
   lexer.source = source;
   auto tokens = Tokenize(lexer);
   Parser parser(tokens, source);
+  parser.silent_mode = true;
   auto result = parser.ParseJson();
   REQUIRE(result);
 }
@@ -70,6 +73,7 @@ TEST_CASE("The parser can parse the array [{\"a\": 1, \"b\": [2, 3]}, {\"c\": tr
   lexer.source = source;
   auto tokens = Tokenize(lexer);
   Parser parser(tokens, source);
+  parser.silent_mode = true;
   auto result = parser.ParseJson();
   REQUIRE(result);
 }

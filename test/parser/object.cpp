@@ -12,6 +12,7 @@ TEST_CASE("The parser can parse the object {\"a\": 2}", "[parser]") {
   lexer.source = source;
   auto tokens = Tokenize(lexer);
   Parser parser(tokens, source);
+  parser.silent_mode = true;
   auto result = parser.ParseJson();
   REQUIRE(result);
 }
@@ -24,6 +25,7 @@ TEST_CASE("The parser can parse the object {\"a\": \"Hello\"}", "[parser]") {
   lexer.source = source;
   auto tokens = Tokenize(lexer);
   Parser parser(tokens, source);
+  parser.silent_mode = true;
   auto result = parser.ParseJson();
   REQUIRE(result);
 }

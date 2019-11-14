@@ -192,7 +192,7 @@ bool ParseObject(Parser &context) {
 
 Parser::Parser(const std::vector<Token> &tokens, const std::string &source)
     : current_index(0), current(Token{}), peek(Token{}), tokens(tokens), source(source), errors({}),
-      silent_mode(true) {
+      silent_mode(false) {
   RegisterVisitor(TokenType::NUMBER, details::ParsePrimitive);
   RegisterVisitor(TokenType::STRING, details::ParsePrimitive);
   RegisterVisitor(TokenType::TRUE, details::ParsePrimitive);
@@ -233,6 +233,8 @@ void Parser::RegisterVisitor(TokenType type, std::function<bool(Parser &)> funct
 }
 
 bool Parser::ParseJson() {
+  // TODO: check if tokens is empty
+  
   // Initialize current and peek token
   NextToken();
   NextToken();
@@ -246,6 +248,10 @@ bool Parser::ParseJson() {
                          "Expected EOF, instead got '" + current.literal + "'");
     return false;
   }
+  if (!silent_mode) {
+    std::cout << current.filename << ": " << termcolor::green << termcolor::bold << "Valid JSON"
+	      << termcolor::reset << std::endl;    
+  }  
   return true;
 }
 
