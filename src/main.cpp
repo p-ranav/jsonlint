@@ -24,7 +24,6 @@ int main(int argc, char *argv[]) {
   } catch (std::exception) {
     std::cerr << "error: failed to open " << filename << std::endl;
   }
-  std::cout << source << std::endl;
   Lexer lexer{source, 0, filename, 1, 1};
   auto tokens = Tokenize(lexer);  
   Parser parser(tokens, source);

@@ -61,6 +61,7 @@ Token ReadString(Lexer &context) {
         peek = ReadCharacter(context);
         if (peek[0] == 0x0A || peek[0] == EOF) {
           // TODO: report unterminated string
+	  throw std::runtime_error("Unterminated string");
         }
         token.literal += peek;
         continue;
@@ -76,6 +77,7 @@ Token ReadString(Lexer &context) {
     }
     if (peek[0] == 0x0A || peek[0] == EOF) {
       // TODO: throw formatted error
+      throw std::runtime_error("Unterminated string");
     }
     ReadCharacter(context);
     break;
@@ -190,7 +192,7 @@ void ReadWhitespace(Lexer &context) {
     char c = '\0';
     if (peek.size() > 0)
       c = peek[0];
-    if (c == 0x20 || c == 0x0D || c == 0x0A || c == 0x09) {
+    if (c == 0x20 || c == 0x0D || c == 0x08 || c == 0x09) {
       ReadCharacter(context);
     } else
       return;
@@ -214,7 +216,7 @@ std::vector<Token> Tokenize(Lexer &context) {
         result.push_back(ReadPunctuation(context, peek));
       } else if (IsIdentifier(peek)) {
         result.push_back(ReadIdentifier(context));
-      } else if (peek[0] == 0x20 || peek[0] == 0x0D || peek[0] == 0x0A || peek[0] == 0x09) {
+      } else if (peek[0] == 0x20 || peek[0] == 0x0D || peek[0] == 0x08 || peek[0] == 0x09) {
         ReadWhitespace(context);
       }
       if (peek[0] == '\n') {
