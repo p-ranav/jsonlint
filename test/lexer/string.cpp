@@ -65,6 +65,25 @@ TEST_CASE("String \"ο Δίας\"", "[lexer]") {
   REQUIRE(tokens[1].literal == "");
 }
 
+TEST_CASE("Unterminated string", "[parser]") {
+  std::string filename = "";
+  std::string source = R"("\ABCD)";
+  Lexer lexer{"", 0, "", 1, 1};
+  lexer.filename = filename;
+  lexer.source = source;
+  lexer.silent_mode = true;
+  bool exception_thrown = false;
+  try {
+    auto tokens = Tokenize(lexer);
+  } catch (std::runtime_error &e) {
+    exception_thrown = true;
+  }
+  auto errors = lexer.errors;
+  REQUIRE(errors.size() == 1);
+  REQUIRE(std::get<2>(errors[0]) == std::string{"Failed to parse string"});
+  REQUIRE(std::get<3>(errors[0]) == std::string{"Unterminated string"});
+}
+
 TEST_CASE("Incorrect unicode escape sequence", "[parser]") {
   std::string filename = "";
   std::string source = R"("\uABCG")";

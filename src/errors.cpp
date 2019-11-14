@@ -101,16 +101,16 @@ void ReportError(Stage &context, Token start, Token end, const std::string &brie
 }
 
 void ReportLexerError(Lexer &context, Token start, Token end, const std::string &brief_description,
-                 const std::string &detailed_description) {
+                      const std::string &detailed_description) {
   ReportError<Lexer>(context, start, end, brief_description, detailed_description);
 }
 
-void ReportParserError(Parser &context, Token start, Token end, const std::string &brief_description,
-		       const std::string &detailed_description) {
+void ReportParserError(Parser &context, Token start, Token end,
+                       const std::string &brief_description,
+                       const std::string &detailed_description) {
   ReportError<Parser>(context, start, end, brief_description, detailed_description);
 }
 
+} // namespace details
 
-}
-
-}
+} // namespace jsonlint

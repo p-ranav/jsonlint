@@ -1,5 +1,5 @@
-#include <jsonlint/parser.hpp>
 #include <jsonlint/errors.hpp>
+#include <jsonlint/parser.hpp>
 #include <jsonlint/string.hpp>
 #include <termcolor/termcolor.hpp>
 
@@ -11,7 +11,7 @@ bool ParseElement(Parser &context) {
   auto prefix = context.visitors[context.current.type];
   if (!prefix) {
     ReportParserError(context, context.current, context.peek, "Failed to parse element",
-                "Unexpected token '" + context.current.literal + "'");
+                      "Unexpected token '" + context.current.literal + "'");
     return false;
   } else {
     return prefix(context);
@@ -25,7 +25,7 @@ bool ParseSignedNumber(Parser &context) {
   if (!context.ExpectPeek(TokenType::NUMBER)) {
     context.NextToken();
     ReportParserError(context, context.current, context.peek, "Failed to parse signed number",
-                "Expected NUMBER, instead got '" + context.current.literal + "'");
+                      "Expected NUMBER, instead got '" + context.current.literal + "'");
     return false;
   }
   // current is number
@@ -49,7 +49,8 @@ bool ParseArrayLiteral(Parser &context) {
       //                                           ^^^ we're here
       context.NextToken();
       ReportParserError(context, context.current, context.peek, "Failed to parse array",
-                  "Expected ']', instead got ',' - You probably have an extra comma at the end of your list, e.g., [\"a\", \"b\",]");
+                        "Expected ']', instead got ',' - You probably have an extra comma at the "
+                        "end of your list, e.g., [\"a\", \"b\",]");
     }
     context.NextToken(); // get past ','
     if (!ParseElement(context) || context.IsCurrentToken(TokenType::EOF_))
@@ -58,7 +59,7 @@ bool ParseArrayLiteral(Parser &context) {
   if (!context.ExpectPeek(TokenType::RIGHT_BRACKET)) {
     context.NextToken();
     ReportParserError(context, context.current, context.peek, "Failed to parse array",
-                "Expected ']', instead got '" + context.current.literal + "'");
+                      "Expected ']', instead got '" + context.current.literal + "'");
     return false;
   }
   return true;
@@ -72,17 +73,18 @@ bool ParseObject(Parser &context) {
   }
   // there's at least one element
   context.NextToken(); // get past '{'
-  while (!context.IsCurrentToken(TokenType::RIGHT_BRACE) && !context.IsCurrentToken(TokenType::EOF_)) {
+  while (!context.IsCurrentToken(TokenType::RIGHT_BRACE) &&
+         !context.IsCurrentToken(TokenType::EOF_)) {
     if (!context.IsCurrentToken(TokenType::STRING)) {
       ReportParserError(context, context.current, context.peek, "Failed to parse object",
-                  "Expected STRING, instead got '" + context.current.literal + "'");
+                        "Expected STRING, instead got '" + context.current.literal + "'");
       return false;
     }
     // current is string key
     if (!context.ExpectPeek(TokenType::COLON)) {
       context.NextToken();
       ReportParserError(context, context.current, context.peek, "Failed to parse object",
-                  "Expected ':', instead got '" + context.current.literal + "'");
+                        "Expected ':', instead got '" + context.current.literal + "'");
       return false;
     }
     // current is colon
@@ -93,7 +95,7 @@ bool ParseObject(Parser &context) {
     if (!context.IsPeekToken(TokenType::RIGHT_BRACE) && !context.ExpectPeek(TokenType::COMMA)) {
       context.NextToken();
       ReportParserError(context, context.current, context.peek, "Failed to parse object",
-                  "Expected '}', instead got '" + context.current.literal + "'");
+                        "Expected '}', instead got '" + context.current.literal + "'");
       return false;
     }
     context.NextToken();
@@ -157,7 +159,7 @@ bool Parser::ParseJson() {
   if (!ExpectPeek(TokenType::EOF_)) {
     NextToken();
     details::ReportParserError(*this, current, peek, "Failed to parse JSON",
-                         "Expected EOF, instead got '" + current.literal + "'");
+                               "Expected EOF, instead got '" + current.literal + "'");
     return false;
   }
   if (!silent_mode) {

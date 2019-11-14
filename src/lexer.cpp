@@ -1,6 +1,6 @@
 #include <iostream>
-#include <jsonlint/lexer.hpp>
 #include <jsonlint/errors.hpp>
+#include <jsonlint/lexer.hpp>
 #include <jsonlint/utf8.hpp>
 
 namespace jsonlint {
@@ -26,37 +26,19 @@ std::string ReadCharacter(Lexer &context, bool update_index = true) {
 
 std::string PeekCharacter(Lexer &context) { return ReadCharacter(context, false); }
 
-bool IsHexCharacter(const std::string& character) {
+bool IsHexCharacter(const std::string &character) {
   if (character.size() == 0)
     return false;
   if (character.size() == 1) {
     auto c = character[0];
-    return (c == '0' ||
-	    c == '1' ||
-	    c == '2' ||
-	    c == '3' ||
-	    c == '4' ||
-	    c == '5' ||
-	    c == '6' ||
-	    c == '7' ||
-	    c == '8' ||
-	    c == '9' ||
-	    c == 'a' ||
-	    c == 'b' ||
-	    c == 'c' ||
-	    c == 'd' ||
-	    c == 'e' ||
-	    c == 'f' ||	    
-	    c == 'A' ||
-	    c == 'B' ||
-	    c == 'C' ||
-	    c == 'D' ||
-	    c == 'E' ||
-	    c == 'F');
+    return (c == '0' || c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6' ||
+            c == '7' || c == '8' || c == '9' || c == 'a' || c == 'b' || c == 'c' || c == 'd' ||
+            c == 'e' || c == 'f' || c == 'A' || c == 'B' || c == 'C' || c == 'D' || c == 'E' ||
+            c == 'F');
   }
   return false;
 }
-  
+
 Token ReadString(Lexer &context) {
   Token token{TokenType::STRING, "", context.filename, context.line, context.cursor};
   // consume first double quote
@@ -64,6 +46,11 @@ Token ReadString(Lexer &context) {
   while (true) {
     // peek at next character
     peek = PeekCharacter(context);
+    if (peek[0] == 0x0A || peek[0] == EOF || peek == "") {
+      token.cursor_start = context.cursor;
+      token.cursor_end = context.cursor;
+      ReportLexerError(context, token, token, "Failed to parse string", "Unterminated string");
+    }
     // check if peek is the start of an escape sequence
     if (peek[0] == '\\') {
       // consume escape character
@@ -87,26 +74,26 @@ Token ReadString(Lexer &context) {
                  peek[0] == 't') { // horizontal tab
         peek = ReadCharacter(context);
         token.literal += "\\" + peek;
-	continue;
+        continue;
       } else if (peek[0] == 'u') {
-	peek = ReadCharacter(context); // consume 'u'
-	// Expect 4 hex characters here
-	for (size_t i = 0; i < 4; i++) {
-	  peek = PeekCharacter(context);
-	  if (!IsHexCharacter(peek)) {
-	    token.cursor_start = context.cursor - 1;
-	    token.cursor_end = context.cursor - 1;
-	    ReportLexerError(context, token, token, "Failed to parse unicode escape sequence",
-			     "Expected hex character, instead got '" + peek + "'");
-	    throw std::runtime_error("Expected hex character");
-	  }
-	  ReadCharacter(context); // consume hex character
-	}
+        peek = ReadCharacter(context); // consume 'u'
+        // Expect 4 hex characters here
+        for (size_t i = 0; i < 4; i++) {
+          peek = PeekCharacter(context);
+          if (!IsHexCharacter(peek)) {
+            token.cursor_start = context.cursor - 1;
+            token.cursor_end = context.cursor - 1;
+            ReportLexerError(context, token, token, "Failed to parse unicode escape sequence",
+                             "Expected hex character, instead got '" + peek + "'");
+          }
+          ReadCharacter(context); // consume hex character
+        }
       } else {
         peek = ReadCharacter(context);
-        if (peek[0] == 0x0A || peek[0] == EOF) {
-          // TODO: report unterminated string
-          throw std::runtime_error("Unterminated string");
+        if (peek[0] == 0x0A || peek[0] == EOF || peek == "") {
+          token.cursor_start = context.cursor;
+          token.cursor_end = context.cursor;
+          ReportLexerError(context, token, token, "Failed to parse string", "Unterminated string");
         }
         token.literal += peek;
         continue;
@@ -120,9 +107,10 @@ Token ReadString(Lexer &context) {
       token.literal += peek;
       continue;
     }
-    if (peek[0] == 0x0A || peek[0] == EOF) {
-      // TODO: throw formatted error
-      throw std::runtime_error("Unterminated string");
+    if (peek[0] == 0x0A || peek[0] == EOF || peek == "") {
+      token.cursor_start = context.cursor + 1;
+      token.cursor_end = context.cursor + 1;
+      ReportLexerError(context, token, token, "Failed to parse string", "Unterminated string");
     }
     ReadCharacter(context);
     break;
@@ -161,7 +149,7 @@ Token ReadNumber(Lexer &context, const std::string &character) {
     }
     break;
   }
-  token.cursor_end = token.cursor_start + token.literal.size();  
+  token.cursor_end = token.cursor_start + token.literal.size();
   return token;
 }
 
@@ -198,13 +186,15 @@ Token ReadIdentifier(Lexer &context) {
   else if (token.literal == "null")
     token.type = TokenType::NULL_;
   else {
-    // TODO: report error - unexpected token
+    ReportError(context, token, token, "Failed to parse keyword",
+		"Expected 'true', 'false', or 'null', instead got '" + token.literal + "'");
   }
   return token;
 }
 
 Token ReadPunctuation(Lexer &context, const std::string &character) {
-  Token token{TokenType::ILLEGAL, character, context.filename, context.line, context.cursor, context.cursor + 1};
+  Token token{TokenType::ILLEGAL, character,      context.filename,
+              context.line,       context.cursor, context.cursor + 1};
   auto next = ReadCharacter(context);
   if (next == ",") {
     token.type = TokenType::COMMA;
@@ -223,7 +213,8 @@ Token ReadPunctuation(Lexer &context, const std::string &character) {
   } else if (next == "}") {
     token.type = TokenType::RIGHT_BRACE;
   } else {
-    // TODO: report error - illegal token
+    ReportError(context, token, token, "Failed to parse punctuation",
+		"Unexpected token '" + token.literal + "'");    
   }
   return token;
 }
