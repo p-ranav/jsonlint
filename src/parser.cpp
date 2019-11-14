@@ -17,6 +17,16 @@ bool ParsePrimitive(Parser &context) {
   return true;
 }
 
+bool ParseSignedNumber(Parser &context) {
+  // assume current is '-' or '+'
+  if (!context.ExpectPeek(TokenType::NUMBER)) {
+    // TOOD: report error
+    return false;
+  }
+  // current is number
+  return true;
+}  
+  
 bool ParseArrayLiteral(Parser &context) {
   // assume current is '['
   if (context.IsPeekToken(TokenType::RIGHT_BRACKET))
@@ -72,7 +82,8 @@ Parser::Parser(const std::vector<Token>& tokens, const std::string &source) :
   RegisterVisitor(TokenType::TRUE, details::ParsePrimitive);
   RegisterVisitor(TokenType::FALSE, details::ParsePrimitive);
   RegisterVisitor(TokenType::NULL_, details::ParsePrimitive);
-  // TODO: Add MINUS and PLUS
+  RegisterVisitor(TokenType::PLUS, details::ParseSignedNumber);
+  RegisterVisitor(TokenType::MINUS, details::ParseSignedNumber);
   RegisterVisitor(TokenType::LEFT_BRACKET, details::ParseArrayLiteral);
   RegisterVisitor(TokenType::LEFT_BRACE, details::ParseObject);
 }

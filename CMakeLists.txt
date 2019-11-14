@@ -35,6 +35,7 @@ set_property(TARGET PARSER PROPERTY CXX_STANDARD 11)
 file(GLOB TEST_SOURCES  
   "test/*.cpp" 
   "test/lexer/*.cpp"
+  "test/parser/*.cpp"
 )
 ADD_EXECUTABLE(TESTS ${TEST_SOURCES})
 INCLUDE_DIRECTORIES("ext")
