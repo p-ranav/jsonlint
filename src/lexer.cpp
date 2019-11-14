@@ -8,21 +8,17 @@ namespace details {
 std::string ReadCharacter(LexerState &context, bool update_index = true) {
   std::string result = "";
   int length = 0;
-
   // get length of next multi-byte character
   if (context.index < context.source.size())
     length = GetUTF8SequenceLength(&(context.source[context.index]));
-
   // append bytes of next multi-byte character to result
   for (int i = 0; i < length; i++, context.index++)
     result += context.source[context.index];
-
   // update index if necessary
   if (!update_index)
     context.index -= length;
   else
     context.cursor += 1;
-
   return result;
 }
 
@@ -69,7 +65,6 @@ Token ReadString(LexerState &context) {
         continue;
       }
     }
-
     // check if peek terminates string literal
     // if not, save character in token literal
     peek = PeekCharacter(context);
