@@ -27,10 +27,10 @@ int main(int argc, char *argv[]) {
       Parser parser(tokens, source);
       parser.ParseJson();
     } else {
-      throw std::runtime_error("error: failed to open " + filename);
+      std::cerr << termcolor::red << termcolor::bold << "error: failed to open " << filename
+                << std::endl;
     }
   } catch (std::runtime_error &e) {
-    std::cerr << termcolor::red << termcolor::bold << e.what() << std::endl;
   }
   return 0;
 }

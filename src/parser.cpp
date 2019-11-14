@@ -48,8 +48,7 @@ bool ParseArrayLiteral(Parser &context) {
     if (context.IsPeekToken(TokenType::RIGHT_BRACKET)) {
       // comma was a trailing comma, e.g., [1, 2, 3, ]
       //                                           ^^^ we're here
-      context.NextToken();
-      ReportParserError(context, context.current, context.peek, "Failed to parse array",
+      ReportParserError(context, context.current, context.current, "Failed to parse array",
                         "Expected ']', instead got ',' - You probably have an extra comma at the "
                         "end of your list, e.g., [\"a\", \"b\",]");
     }
@@ -85,7 +84,7 @@ bool ParseObject(Parser &context) {
     if (keys.find(context.current.literal) == keys.end())
       keys.insert(context.current.literal);
     else {
-      ReportParserError(context, context.current, context.current, "Failed to parse object",
+      ReportParserError(context, context.current, context.peek, "Failed to parse object",
                         "Duplicate key '" + context.current.literal + "'");
     }
     // current is string key

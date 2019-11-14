@@ -60,17 +60,15 @@ void ReportError(Stage &context, Token start, Token end, const std::string &brie
   std::string message_leading_blanks(cursor - 1, ' ');
   std::string message_carets = " ";
 
-  std::cout << start.cursor_end << " " << end.cursor_start << std::endl;
-
   if (start.cursor_start == end.cursor_start && start.cursor_end == end.cursor_end) {
     // start and end are the same token
-    message_carets = " ^ ";
+    message_carets = "^ ";
   } else if (end.cursor_start - start.cursor_end == 1) {
     message_carets = " " + std::string(start.cursor_end - start.cursor_start, '^') + " ";
   } else if (end.cursor_start - start.cursor_end > 1) {
     message_carets = " " + std::string(end.cursor_start - cursor - 1, '^') + " ";
   } else {
-    message_carets = " " + std::string(start.cursor_end - start.cursor_start, '^') + " ";
+    message_carets = std::string(start.cursor_end - start.cursor_start, '^') + " ";
   }
 
   if (message_carets == " " || message_carets == "  ") {
