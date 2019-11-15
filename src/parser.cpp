@@ -49,8 +49,7 @@ bool ParseArrayLiteral(Parser &context) {
       // comma was a trailing comma, e.g., [1, 2, 3, ]
       //                                           ^^^ we're here
       ReportParserError(context, context.current, context.current, "Failed to parse array",
-                        "Expected ']', instead got ',' - You probably have an extra comma at the "
-                        "end of your list, e.g., [\"a\", \"b\",]");
+                        "Expected ']', instead got ','");
     }
     context.NextToken(); // get past ','
     if (!ParseElement(context) || context.IsCurrentToken(TokenType::EOF_))
