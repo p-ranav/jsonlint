@@ -34,7 +34,7 @@ Optional arguments:
 
 ### Trailing comma in array
 
-<img src="https://i.imgur.com/dWTPSns.png" alt="trailing comma"/>
+<img src="https://i.imgur.com/uft3FmR.png" alt="trailing comma"/>
 
 ### Duplicate key in object
 
