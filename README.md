@@ -12,3 +12,20 @@ $ cd tsparse
 $ mkdir build && cd build
 $ cmake .. && make && make check
 ```
+
+## Usage
+
+```bash
+$ ./jsonlint --help
+Usage: jsonlint [options] file 
+
+Positional arguments:
+file      	json file to validate
+
+Optional arguments:
+-h --help 	show this help message and exit
+```
+
+## Examples
+
+
