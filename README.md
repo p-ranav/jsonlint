@@ -8,7 +8,7 @@
 
 ```bash
 $ git clone https://github.com/p-ranav/jsonlint.git
-$ cd tsparse
+$ cd jsonlint
 $ mkdir build && cd build
 $ cmake .. && make && make check
 ```
