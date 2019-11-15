@@ -1,5 +1,5 @@
 <p align="center">
-  <img height="100" src="https://i.imgur.com/tBgn9t9.png" alt="jsonlint"/>
+  <img height="100" src="https://i.imgur.com/Q51CERl.png" alt="jsonlint"/>
 </p>
 
 `jsonlint` is a lightweight command-line tool for validating JSON.
