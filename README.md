@@ -1,5 +1,5 @@
 <p align="center">
-  <img height="100" src="https://i.imgur.com/tBgn9t9.png" alt="tsparse"/>
+  <img height="100" src="https://i.imgur.com/tBgn9t9.png" alt="jsonlint"/>
 </p>
 
 `jsonlint` is a lightweight command-line tool for validating JSON.
@@ -27,5 +27,9 @@ Optional arguments:
 ```
 
 ## Examples
+
+### Unterminated String
+
+<img src="https://i.imgur.com/CraG7PY.png" alt="unterminated string"/>
 
 
