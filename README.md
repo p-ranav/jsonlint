@@ -1,5 +1,5 @@
 <p align="center">
-  <img height="100" src="https://i.imgur.com/Q51CERl.png" alt="jsonlint"/>
+  <img height="100" src="img/logo.png" alt="jsonlint"/>
 </p>
 
 `jsonlint` is a lightweight command-line tool for validating JSON.
@@ -30,16 +30,16 @@ Optional arguments:
 
 ### Unterminated String
 
-<img src="https://i.imgur.com/CraG7PY.png" alt="unterminated string"/>
+<img src="img/01.png" alt="unterminated string"/>
 
 ### Trailing comma in array
 
-<img src="https://i.imgur.com/uft3FmR.png" alt="trailing comma"/>
+<img src="img/02.png" alt="trailing comma"/>
 
 ### Duplicate key in object
 
-<img src="https://i.imgur.com/Kgee8Ak.png" alt="duplicate key"/>
+<img src="img/03.png" alt="duplicate key"/>
 
 ### Typo in keyword
 
-<img src="https://i.imgur.com/BOon2Q4.png" alt="typo in keyword"/>
+<img src="img/04.png" alt="typo in keyword"/>
